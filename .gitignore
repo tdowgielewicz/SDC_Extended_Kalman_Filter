@@ -6,7 +6,9 @@ build/
 
 # editor config
 .vscode/
-
+.dbopen
+.opendb
+*.vs
 # Xcode
 *.pbxuser
 !default.pbxuser
