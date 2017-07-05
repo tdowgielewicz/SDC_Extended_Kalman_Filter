@@ -48,7 +48,7 @@ MatrixXd Tools::CalculateRadarJacobian(const VectorXd& x_state) {
   /**
 
   */
-
+	cout << "CalculateRadarJacobian ()" << endl;
 	MatrixXd Hj(3, 4);
 	//recover state parameters
 	float px = x_state(0);

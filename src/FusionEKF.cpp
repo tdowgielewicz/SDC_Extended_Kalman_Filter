@@ -78,7 +78,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 		0, 0, 0, 1000;
 
 
-    cout << "EKF: " << endl;
+
     ekf_.x_ = VectorXd(4);
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
@@ -110,6 +110,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
 	is_initialized_ = true;
 	cout << "Extended Kalman Filter initialised " << endl;
+	cout << "EKF: " << ekf_.x_ <<  endl;
 	
 	previous_timestamp_ = measurement_pack.timestamp_;
 	return;
@@ -128,6 +129,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 	 //Lesson 5 Laser Measurements Part 3
    */
   
+  cout << "dt>";
 
   float dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;	//dt - expressed in seconds
   previous_timestamp_ = measurement_pack.timestamp_;
@@ -137,6 +139,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 	  0, 0, 1, 0,
 	  0, 0, 0, 1;
 
+  cout << "timestamp" << measurement_pack.timestamp_ << endl;
 
   float dt2 = dt*dt;
   float dt3 = dt2 * dt;

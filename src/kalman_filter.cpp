@@ -1,7 +1,9 @@
 #include "kalman_filter.h"
+#include <iostream>
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
+using namespace std;
 
 KalmanFilter::KalmanFilter() {}
 
@@ -18,6 +20,9 @@ void KalmanFilter::Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in,
 }
 
 void KalmanFilter::Predict() {
+
+	cout << "Program started TD!" << endl;
+
 	x_ = F_ * x_;
 	MatrixXd Ft = F_.transpose();
 	P_ = F_ * P_ * Ft + Q_;
@@ -52,8 +57,14 @@ void KalmanFilter::UpdateLaser(const VectorXd &z) {
 void KalmanFilter::UpdateRadar(const VectorXd &z) {
 	
 
-	VectorXd z_pred = H_ * x_;
-	VectorXd y = z - z_pred;
+	double rho = sqrt(x_(0)*x_(0) + x_(1)*x_(1));
+	double theta = atan(x_(1) / x_(0));
+	double rho_dot = (x_(0)*x_(2) + x_(1)*x_(3)) / rho;
+	VectorXd h = VectorXd(3); // h(x_)
+	h << rho, theta, rho_dot;
+
+	VectorXd y = z - h;
+
 	MatrixXd Ht = H_.transpose();
 	MatrixXd S = H_ * P_ * Ht + R_;
 	MatrixXd Si = S.inverse();
