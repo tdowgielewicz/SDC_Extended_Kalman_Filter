@@ -48,15 +48,16 @@ MatrixXd Tools::CalculateRadarJacobian(const VectorXd& x_state) {
   /**
 
   */
-	cout << "CalculateRadarJacobian ()" << endl;
-	MatrixXd Hj(3, 4);
-	//recover state parameters
 	float px = x_state(0);
 	float py = x_state(1);
 	float vx = x_state(2);
 	float vy = x_state(3);
 
-	//pre-compute a set of terms to avoid repeated calculation
+	cout << "CalculateRadarJacobian ()" << endl;
+	MatrixXd Hj(3, 4);
+
+
+	////pre-compute a set of terms to avoid repeated calculation
 	float c1 = px*px + py*py;
 	float c2 = sqrt(c1);
 	float c3 = (c1*c2);

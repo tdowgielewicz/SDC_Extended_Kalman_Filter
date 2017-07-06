@@ -56,7 +56,7 @@ int main()
 				cout << "sensor line: " << s << endl;
 
 				try {
-					auto j = json::parse(s);
+					json j = json::parse(s);
 
 
 					cout << "Parse";
@@ -65,7 +65,7 @@ int main()
 					if (event == "telemetry") {
 						// j[1] is the data JSON object
 
-						cout << "R";
+						cout << "Telemetry";
 						string sensor_measurment = j[1]["sensor_measurement"];
 
 						MeasurementPackage meas_package;
@@ -170,7 +170,7 @@ int main()
 
 				std::string msg = "42[\"manual\",{}]";
 				ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
-				cout << "-";
+				//cout << ".";
 			}
 		}
 

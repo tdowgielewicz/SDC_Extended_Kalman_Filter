@@ -77,13 +77,17 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 		0, 0, 1000, 0,
 		0, 0, 0, 1000;
 
+	ekf_.Q_ = MatrixXd(4, 4);
 
+
+	ekf_.F_ = MatrixXd(4, 4);
 
     ekf_.x_ = VectorXd(4);
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
 
 		// Get polar values from sensors
+		cout << "First frame from radar " << endl;
 		float rho = measurement_pack.raw_measurements_[0];
 		float phi = measurement_pack.raw_measurements_[1];
 		float rho_dot = measurement_pack.raw_measurements_[2];
@@ -99,6 +103,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
 
+		cout << "First frame from laser " << endl;
 		float x = measurement_pack.raw_measurements_[0];
 		float y = measurement_pack.raw_measurements_[1];
 
@@ -129,7 +134,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 	 //Lesson 5 Laser Measurements Part 3
    */
   
-  cout << "dt>";
+  cout << "dt";
 
   float dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;	//dt - expressed in seconds
   previous_timestamp_ = measurement_pack.timestamp_;
@@ -145,43 +150,37 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   float dt3 = dt2 * dt;
   float dt4 = dt3 * dt;
 
-
-
-  ekf_.Q_ = MatrixXd(4, 4);
+    
   ekf_.Q_ << dt4 / 4 * noise_ax, 0, dt3 / 2 * noise_ax, 0,
 	  0, dt4 / 4 * noise_ay, 0, dt3 / 2 * noise_ay,
 	  dt3 / 2 * noise_ax, 0, dt2*noise_ax, 0,
-	  0, dt3 / 2 * noise_ay, 0, dt2*noise_ay;
+	  0, dt3 / 2 * noise_ay, 0, dt2*noise_ay; 
 
-
+	  
   ekf_.Predict();
 
   /*****************************************************************************
    *  Update
    ****************************************************************************/
 
-  /**
-   TODO:
-     * Use the sensor type to perform the update step.
-     * Update the state and covariance matrices.
-   */
-
-
 
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
-    // Radar updates
+     //Radar updates
 	  ekf_.R_ = R_radar_;
-	  //Radar is non linear we need to calculate jackobian
-	  ekf_.H_ = tools.CalculateRadarJacobian(measurement_pack.raw_measurements_);
+	  //Radar is non linear we need to calculate jacobian
+	  ekf_.H_ = tools.CalculateRadarJacobian(ekf_.x_);
 	  ekf_.UpdateRadar(measurement_pack.raw_measurements_);
   } else {
-    // Laser updates
+     //Laser updates
 	  ekf_.R_ = R_laser_;
 	  ekf_.H_ = H_laser_;
 	  ekf_.UpdateLaser(measurement_pack.raw_measurements_);
   }
+  
 
   // print the output
+
   cout << "x_ = " << ekf_.x_ << endl;
   cout << "P_ = " << ekf_.P_ << endl;
+  
 }
