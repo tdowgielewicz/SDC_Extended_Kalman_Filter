@@ -64,6 +64,8 @@ public:
    */
   void UpdateRadar(const Eigen::VectorXd &z);
 
+  void Update(const Eigen::VectorXd &error);
+
 };
 
 #endif /* KALMAN_FILTER_H_ */

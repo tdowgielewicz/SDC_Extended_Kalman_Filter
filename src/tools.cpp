@@ -40,38 +40,43 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 	rmse = rmse.array().sqrt();
 
 	//return the result
+	cout << "RMSE" << rmse << endl;
 	return rmse;
 	
 }
 
 MatrixXd Tools::CalculateRadarJacobian(const VectorXd& x_state) {
-  /**
-
-  */
 	float px = x_state(0);
 	float py = x_state(1);
 	float vx = x_state(2);
 	float vy = x_state(3);
-
-	cout << "CalculateRadarJacobian ()" << endl;
 	MatrixXd Hj(3, 4);
+	// Deal with the special case problems
 
 
-	////pre-compute a set of terms to avoid repeated calculation
-	float c1 = px*px + py*py;
-	float c2 = sqrt(c1);
-	float c3 = (c1*c2);
+	float div_by_zero_pro = 0.001;
 
-	//check division by zero
-	if (fabs(c1) < 0.0001) {
-		cout << "CalculateRadarJacobian () - Error - Division by Zero" << endl;
-		return Hj;
+	if (fabs(px) < div_by_zero_pro) {
+		px = div_by_zero_pro;
 	}
 
-	//compute the Jacobian matrix
+	if (fabs(py) <  div_by_zero_pro) {
+
+		py = div_by_zero_pro;
+	}
+
+	float c1 = px*px + py*py;
+	// Check division by zero
+	if (fabs(c1) <  div_by_zero_pro) {
+		c1 = div_by_zero_pro;
+	}
+	float c2 = sqrt(c1);
+	float c3 = (c1*c2);
+	// Compute the Jacobian matrix
 	Hj << (px / c2), (py / c2), 0, 0,
 		-(py / c1), (px / c1), 0, 0,
 		py*(vx*py - vy*px) / c3, px*(px*vy - py*vx) / c3, px / c2, py / c2;
+	return Hj;
 
 	return Hj;
 }

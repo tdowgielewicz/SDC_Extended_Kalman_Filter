@@ -144,11 +144,13 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 	  0, 0, 1, 0,
 	  0, 0, 0, 1;
 
-  cout << "timestamp" << measurement_pack.timestamp_ << endl;
+  cout << "timestamp: DT" << dt << endl;
 
   float dt2 = dt*dt;
   float dt3 = dt2 * dt;
   float dt4 = dt3 * dt;
+
+  
 
     
   ekf_.Q_ << dt4 / 4 * noise_ax, 0, dt3 / 2 * noise_ax, 0,
@@ -163,10 +165,18 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
    *  Update
    ****************************************************************************/
 
-
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
      //Radar updates
 	  ekf_.R_ = R_radar_;
+
+	  if (fabs(ekf_.x_(0)) < 0.0001) {
+		  ekf_.x_(0) = 0.0001;
+	  }
+
+	  if (fabs(ekf_.x_(1)) < 0.0001) {
+		  ekf_.x_(1) = 0.0001;
+	  }
+
 	  //Radar is non linear we need to calculate jacobian
 	  ekf_.H_ = tools.CalculateRadarJacobian(ekf_.x_);
 	  ekf_.UpdateRadar(measurement_pack.raw_measurements_);
